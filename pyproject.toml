@@ -1,0 +1,90 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cf-regions-gui"
+version = "0.1.0"
+description = "Offline native desktop map for CF standardized regions"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{name = "Yves Sorge"}]
+maintainers = [{name = "Yves Sorge"}]
+keywords = ["CF conventions", "desktop", "geospatial", "Qt", "regions"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering :: GIS",
+]
+dependencies = [
+  "cf-regions>=0.1",
+  "PySide6-Essentials>=6.8,<7",
+]
+
+[project.optional-dependencies]
+globe = [
+  "PySide6-Addons>=6.8,<7",
+]
+dev = [
+  "build>=1.2",
+  "mypy>=1.11",
+  "PySide6-Addons>=6.8,<7",
+  "pytest>=8.3",
+  "pytest-qt>=4.4",
+  "ruff>=0.9",
+  "twine>=5.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/ysorge/cf-regions-gui"
+Documentation = "https://github.com/ysorge/cf-regions-gui#readme"
+Issues = "https://github.com/ysorge/cf-regions-gui/issues"
+Source = "https://github.com/ysorge/cf-regions-gui"
+
+[project.scripts]
+cfregions-gui = "cfregions_gui.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cfregions_gui = ["py.typed", "globe.qml"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers --import-mode=importlib"
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["cfregions_gui"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+mypy_path = ["src"]
+files = ["src"]
