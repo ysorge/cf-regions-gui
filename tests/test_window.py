@@ -138,7 +138,16 @@ def test_sidebar_scrolls_and_lookup_results_use_table_rows(qtbot: Any) -> None:
     assert window._map_viewport._navigation.geometry().top() >= 0
     assert window._map_viewport._navigation.geometry().left() >= 0
     assert window._map_viewport._navigation.geometry().bottom() < window._map_viewport.height()
-    assert window._sidebar_scroll.verticalScrollBar().maximum() > 0
+    assert (
+        window._sidebar_scroll.verticalScrollBarPolicy()
+        == Qt.ScrollBarPolicy.ScrollBarAsNeeded
+    )
+    sidebar = window._sidebar_scroll.widget()
+    assert sidebar is not None
+    sidebar.setMinimumHeight(window._sidebar_scroll.viewport().height() + 100)
+    qtbot.waitUntil(
+        lambda: window._sidebar_scroll.verticalScrollBar().maximum() > 0
+    )
     assert window._longitude.height() >= window._longitude.minimumSizeHint().height()
     assert window._latitude.height() >= window._latitude.minimumSizeHint().height()
     assert window._longitude.geometry().bottom() < window._latitude.geometry().top()
