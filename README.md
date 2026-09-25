@@ -22,7 +22,7 @@ cfregions-gui
 ```
 ### Optional 3D globe view
 
-For an additional native 3D globe view, install the deliberately renderer extra:
+For an additional native 3D globe view, install the deliberately optional renderer extra:
 
 ```console
 pip install "cf-regions-gui[globe]"
