@@ -9,9 +9,9 @@ from PySide6.QtTest import QSignalSpy
 from cfregions_gui.globe import (
     GlobeController,
     GlobeWidget,
-    globe_geometry_resolution,
     geometry_resolution_from_feature,
     globe_available,
+    globe_geometry_resolution,
     texture_scale_for_camera,
     uv_to_coordinate,
 )
