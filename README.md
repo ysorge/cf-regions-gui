@@ -83,7 +83,7 @@ cfregions-gui --profile-directory /path/to/additional-profiles
 python -m cfregions_gui
 ```
 
-### Options
+**Arguments:**
 
 - `--cf-version` selects a historical CF release. The default is the latest release.
 - `--profile` and `--profile-version` select a spatial interpretation profile. 
