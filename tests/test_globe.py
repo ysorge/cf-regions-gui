@@ -9,6 +9,8 @@ from PySide6.QtTest import QSignalSpy
 from cfregions_gui.globe import (
     GlobeController,
     GlobeWidget,
+    globe_geometry_resolution,
+    geometry_resolution_from_feature,
     globe_available,
     texture_scale_for_camera,
     uv_to_coordinate,
@@ -37,6 +39,38 @@ def test_texture_scale_adapts_with_hysteresis() -> None:
     assert texture_scale_for_camera(200.0, 1) == 2
     assert texture_scale_for_camera(220.0, 2) == 2
     assert texture_scale_for_camera(240.0, 2) == 1
+
+
+def test_geometry_resolution_prefers_declared_feature_values() -> None:
+    assert geometry_resolution_from_feature(None) is None
+    assert geometry_resolution_from_feature({"properties": {}}) is None
+    assert (
+        geometry_resolution_from_feature({"properties": {"geometry_resolution": "low"}})
+        == "low"
+    )
+    assert (
+        geometry_resolution_from_feature({"properties": {"geometry_resolution": "high"}})
+        == "high"
+    )
+    assert (
+        geometry_resolution_from_feature({"properties": {"geometry_resolution": "unknown"}})
+        is None
+    )
+
+
+def test_globe_geometry_resolution_prefers_selected_over_land() -> None:
+    assert (
+        globe_geometry_resolution(
+            {"properties": {"geometry_resolution": "low"}},
+            {"properties": {"geometry_resolution": "high"}},
+        )
+        == "high"
+    )
+    assert (
+        globe_geometry_resolution({"properties": {"geometry_resolution": "low"}}, None)
+        == "low"
+    )
+    assert globe_geometry_resolution(None, None) == "low"
 
 
 def test_globe_hover_conversion_does_not_select_a_point() -> None:
