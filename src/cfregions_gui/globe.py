@@ -61,6 +61,33 @@ def texture_scale_for_camera(camera_distance: float, current_scale: int) -> int:
     return 1 if camera_distance >= 235.0 else 2
 
 
+def geometry_resolution_from_feature(feature: dict[str, object] | None) -> str | None:
+    """Return the declared geometry resolution from a feature, if valid."""
+
+    if feature is None:
+        return None
+    properties = feature.get("properties")
+    if not isinstance(properties, dict):
+        return None
+    resolution = properties.get("geometry_resolution")
+    if resolution in {"low", "high"}:
+        return str(resolution)
+    return None
+
+
+def globe_geometry_resolution(
+    land: dict[str, object] | None,
+    selected: dict[str, object] | None,
+) -> str:
+    """Choose globe texture resolution, preferring the selected geometry."""
+
+    return (
+        geometry_resolution_from_feature(selected)
+        or geometry_resolution_from_feature(land)
+        or "low"
+    )
+
+
 class GlobeController(QObject):
     """Small QML bridge containing globe state and interaction logic."""
 
@@ -191,7 +218,6 @@ class GlobeWidget(QQuickWidget):
         self._land: dict[str, object] | None = None
         self._selected: dict[str, object] | None = None
         self._marker: tuple[float, float] | None = None
-        self._geometry_resolution = "low"
         self._texture_scale = 1
         self._texture_timer = QTimer(self)
         self._texture_timer.setInterval(220)
@@ -221,7 +247,7 @@ class GlobeWidget(QQuickWidget):
             land=self._land,
             selected=self._selected,
             marker=self._marker,
-            geometry_resolution=self._geometry_resolution,
+            geometry_resolution=globe_geometry_resolution(self._land, self._selected),
             palette=self.palette(),
             texture_scale=self._texture_scale,
         )
@@ -256,11 +282,6 @@ class GlobeWidget(QQuickWidget):
 
     def set_land(self, feature: dict[str, object]) -> None:
         self._land = feature
-        properties = feature.get("properties")
-        if isinstance(properties, dict):
-            resolution = properties.get("geometry_resolution")
-            if resolution in {"low", "high"}:
-                self._geometry_resolution = str(resolution)
         self._update_texture()
 
     def set_selected_geometry(

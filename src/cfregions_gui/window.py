@@ -135,7 +135,7 @@ class MainWindow(QMainWindow):
         version_form.addRow(self._profile_label, self._profile)
         version_form.addRow(self._profile_version_label, self._profile_version)
         version_form.addRow("CF release", self._version)
-        version_form.addRow("Shape detail", self._resolution)
+        version_form.addRow("Region shape detail", self._resolution)
         layout.addLayout(version_form)
         mapping_notes = QPushButton("Mapping provenance and limitations…")
         mapping_notes.clicked.connect(self._show_mapping_notes)
@@ -436,10 +436,18 @@ class MainWindow(QMainWindow):
         self._details_group.hide()
         self._shown_region = None
         self._map.clear_selected_geometry()
+        available_resolutions = {
+            representation.resolution for representation in info.geometry_representations
+        }
+        overview_resolution = (
+            "low"
+            if "low" in available_resolutions
+            else info.default_geometry_resolution
+        )
         self._map.set_land(
             self._session.shape(
                 "global_land",
-                geometry_resolution=self._geometry_resolution(),
+                geometry_resolution=overview_resolution,
             )
         )
         self.statusBar().showMessage(
@@ -456,9 +464,6 @@ class MainWindow(QMainWindow):
         if resolution is None:
             return
         try:
-            self._map.set_land(
-                self._session.shape("global_land", geometry_resolution=resolution)
-            )
             if self._shown_region is not None:
                 self._show_region(self._shown_region)
         except Exception as error:
@@ -483,6 +488,7 @@ class MainWindow(QMainWindow):
             f"CRS: {info.crs}\n"
             f"Lookup: {info.area_predicate}, boundary inclusive, "
             f"{info.lookup_geometry_resolution} geometry\n"
+            f"Geometry validation: {info.lookup_geometry_validation}\n"
             f"Hierarchy: {info.hierarchy_name} {info.hierarchy_version}\n"
             f"Shape detail: {representations}\n\n"
             f"Limitations\n\n{limitations}",

@@ -16,3 +16,5 @@ This is the first public release.
 - Optional `globe` extra for a native Qt Quick 3D globe using local textures.
 - Mouse, touchpad, and map-scoped controls with synchronized 2D/3D selection.
 - Tests, type checks, and packaging validation on supported Python versions.
+- A compact world background independent of the selected region's shape detail,
+  avoiding full-world high-detail rendering during startup and detail changes.
